@@ -18,8 +18,32 @@ private:
   public:
   Node* current;
 
-  CircularLinkedList() : head(nullptr)
-}
+  CircularLinkedList() : head(nullptr), tail(nullptr), current(nullptr) {}
+
+  void append (const T& value) {
+    Node* newNode = new Node(value);
+    if (!head) {
+      head = tail = newNode;
+      newNode ->next = head;
+    } else {
+       tail -> next = newNode;
+       tail = newNode;
+       tail -> next = head;
+    }
+    if (!current) current = head;
+    }
+
+    void step() {
+      if (current) current = current ->next;
+    }
+    T currentNode() const {
+      if (current) return current -> data;
+      throw std::runtime_error("List is empty)";
+    }
+
+  
+    };
+
 
 
 
