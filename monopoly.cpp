@@ -1,54 +1,64 @@
 #include <iostream>
 #include <string>
 
-using namespace std; 
+using namespace std;
 
 template <typename T>
 class CircularLinkedList {
 private:
-  struck Node {
-    T data;
-    Node* next;
-    Node(const T& value) : data(value), next(nullptr) {}
-  };
-
-  Node* head;
-  Node* tail;
-
-  public:
-  Node* current;
-
-  CircularLinkedList() : head(nullptr), tail(nullptr), current(nullptr) {}
-
-  void append (const T& value) {
-    Node* newNode = new Node(value);
-    if (!head) {
-      head = tail = newNode;
-      newNode ->next = head;
-    } else {
-       tail -> next = newNode;
-       tail = newNode;
-       tail -> next = head;
-    }
-    if (!current) current = head;
-    }
-
-    void step() {
-      if (current) current = current ->next;
-    }
-    T currentNode() const {
-      if (current) return current -> data;
-      throw std::runtime_error("List is empty)";
-    }
-
-  
+    struct Node {
+        T data;
+        Node* next;
+        Node(const T& value) : data(value), next(nullptr) {}
     };
 
+    Node* head;    
+    Node* tail;   
 
+public:
+    Node* current; 
 
+    CircularLinkedList() : head(nullptr), tail(nullptr), current(nullptr) {}
+    ~CircularLinkedList() { clear(); }
 
+    
+    void append(const T& value) {
+        Node* node = new Node(value);
+        if (!head) {
+            head = tail = node;
+            node->next = node; 
+        } else {
+            node->next = head;
+            tail->next = node;
+            tail = node;
+        }
+        if (!current) current = head; 
+    }
 
+    
+    T& currentNode() {
+        if (!current) throw out_of_range("List is empty");
+        return current->data;
+    }
 
+    
+    void step() {
+        if (!current) throw out_of_range("List is empty");
+        current = current->next;
+    }
+
+    
+    void clear() {
+        if (!head) return;
+        Node* cur = head;
+        do {
+            Node* next = cur->next;
+            delete cur;
+            cur = next;
+        } while (cur != head);
+        head = tail = current = nullptr;
+    }
+};
 
 
 int main() {
@@ -96,18 +106,22 @@ int main() {
     monopolyBoard.append("Luxury Tax");
     monopolyBoard.append("Boardwalk");
 
-  cout << "Starting position: " << monopolyBoard.currentNode() << "\n";
+    
+    cout << "Starting position: " << monopolyBoard.currentNode() << "\n";
 
-  monopolyBoard.step();
-  cout << "After 1 step: " << monopolyBoard.currentNode() << "\n";
+    monopolyBoard.step();
+    cout << "After 1 step: " << monopolyBoard.currentNode() << "\n";
 
-  monopolyBoard.step();
-  monopolyBoard.step();
-  monopolyBoard.step();
-  cout << "After 4 step: " << monopolyBoard.currentNode() << "\n";
+    monopolyBoard.step();
+    monopolyBoard.step();
+    monopolyBoard.step();
+    cout << "After 4 steps total: " << monopolyBoard.currentNode() << "\n";
 
-  for (int i = 0; i < 37; i++) {
-    monopoly.step();
-  }
-  cout << "After looping around: " << monopolyBoard.currentNode() << "\n";
+    
+    for (int i = 0; i < 37; i++) {
+        monopolyBoard.step();
+    }
+    cout << "After looping around: " << monopolyBoard.currentNode() << "\n";
+
+    return 0;
 }
